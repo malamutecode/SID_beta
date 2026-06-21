@@ -1,0 +1,100 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="Strona-1" id="Aqjeo5CYyHH1Kx1oHISR">
+    <mxGraphModel dx="1028" dy="611" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="AZE4BpPo5r-lAegwchv_-10" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="AZE4BpPo5r-lAegwchv_-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Zarejestrowanie zgloszenia" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-20" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-4" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#3399FF;" value="Baza pracownikow" vertex="1">
+          <mxGeometry height="100" width="90" x="455" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="SUNCODE" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="SID" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-12" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Klasyfikacja dokumentu" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-19" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="AZE4BpPo5r-lAegwchv_-18" value="ID pracownika">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Algorytm przypisania dokumentu" vertex="1">
+          <mxGeometry height="60" width="120" x="440" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-17" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Schemat przypisania" vertex="1">
+          <mxGeometry height="60" width="120" x="610" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-16" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="UI do tworzenia schematu" vertex="1">
+          <mxGeometry height="60" width="120" x="610" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Przypisanie dokumentu do pracownika" vertex="1">
+          <mxGeometry height="60" width="120" x="680" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-21" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="AZE4BpPo5r-lAegwchv_-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Zarejestrowanie zgloszenia" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-24" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#3399FF;" value="Baza pracownikow" vertex="1">
+          <mxGeometry height="100" width="90" x="495" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="SUNCODE" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="SID" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-27" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Klasyfikacja dokumentu" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Przypisanie dokumentu do pracownika" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-31" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Schemat przypisania" vertex="1">
+          <mxGeometry height="60" width="120" x="650" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-33" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="UI do tworzenia schematu" vertex="1">
+          <mxGeometry height="60" width="120" x="650" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-36" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-30" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="AZE4BpPo5r-lAegwchv_-24" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="360" y="650" as="sourcePoint" />
+            <mxPoint x="460" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-37" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Bezpieczenstwo:&lt;br&gt;1) Izolacja sieciowa&lt;div&gt;2) Szyfrowanie&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;3) Autentykacja&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="120" x="190" y="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

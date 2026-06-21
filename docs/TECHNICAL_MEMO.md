@@ -146,7 +146,7 @@ The performance figures in Section 6 were measured on:
 |---|---|
 | CPU | Intel Core i7-11370H (4C / 8T, 3.3 GHz) |
 | RAM | 16 GB |
-| GPU | NVIDIA GeForce RTX 3070 Laptop, **8 GB VRAM** (driver 572.61) |
+| GPU | NVIDIA GeForce RTX 3070 (Ampere), **8 GB VRAM** (driver 572.61) |
 | OS | Windows 11 Pro |
 | Model | `qwen/qwen3-vl-8b`, served by LM Studio |
 
