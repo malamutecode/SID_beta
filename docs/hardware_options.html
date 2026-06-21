@@ -1,286 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Document Classification — Hardware Options for Deployment</title>
-<style>
-  :root {
-    --ink: #1c2430;
-    --muted: #5b6675;
-    --line: #e2e7ee;
-    --bg: #f6f8fb;
-    --card: #ffffff;
-    --accent: #2563eb;
-    --accent-soft: #eef3ff;
-    --green: #1f9d63;
-    --amber: #c2840a;
-    --red: #c2410c;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--ink);
-    background: var(--bg);
-    line-height: 1.55;
-  }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 28px 64px; }
-  header.title {
-    border-left: 5px solid var(--accent);
-    padding: 6px 0 6px 18px;
-    margin-bottom: 8px;
-  }
-  header.title h1 { margin: 0; font-size: 28px; letter-spacing: -0.2px; }
-  header.title .sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
-  .meta { color: var(--muted); font-size: 13px; margin: 10px 0 30px; }
-  h2 {
-    font-size: 19px; margin: 38px 0 14px;
-    padding-bottom: 6px; border-bottom: 2px solid var(--line);
-  }
-  p { margin: 10px 0; }
-  .lead { font-size: 16px; color: #2c3645; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Classification — Hardware Options</title>
+  <style>
+    :root {
+      --bg:        #f8f9fb;
+      --surface:   #ffffff;
+      --border:    #e2e6ea;
+      --accent:    #2563eb;
+      --accent-lt: #eff6ff;
+      --green:     #16a34a;
+      --green-lt:  #f0fdf4;
+      --amber:     #d97706;
+      --amber-lt:  #fffbeb;
+      --purple:    #7c3aed;
+      --purple-lt: #f5f3ff;
+      --text:      #1e293b;
+      --muted:     #64748b;
+      --tag-bg:    #e2e8f0;
+      --tag-text:  #334155;
+    }
 
-  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 18px; }
-  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
-  .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-    padding: 18px 20px; box-shadow: 0 1px 2px rgba(20,30,50,0.04);
-    display: flex; flex-direction: column;
-  }
-  .card .tag {
-    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .6px;
-    text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-bottom: 10px; width: fit-content;
-  }
-  .tag.server { background: #e8f0ff; color: #1e40af; }
-  .tag.base   { background: #eafaf1; color: #157347; }
-  .tag.edge   { background: #fff4e2; color: #9a6700; }
-  .card h3 { margin: 0 0 2px; font-size: 17px; }
-  .card .platform { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
-  .card ul { margin: 6px 0 14px; padding-left: 18px; }
-  .card li { margin: 4px 0; font-size: 14px; }
-  .card .foot { margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 13px; }
-  .pill { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
-  .pill.good { background: #e7f6ee; color: var(--green); }
-  .pill.warn { background: #fcf3e0; color: var(--amber); }
-  .pill.note { background: #fdeee4; color: var(--red); }
-  .price { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--ink); }
-  .foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  td.price-cell { font-weight: 700; white-space: nowrap; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; background: var(--card); }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { background: var(--accent-soft); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #33425a; }
-  tr:last-child td { border-bottom: none; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      padding: 2rem 1rem 4rem;
+    }
 
-  .callout {
-    background: #fff8ec; border: 1px solid #f1dcae; border-left: 4px solid var(--amber);
-    border-radius: 8px; padding: 14px 16px; margin: 18px 0; font-size: 14px;
-  }
-  .callout strong { color: #8a5d00; }
-  .rec {
-    background: var(--accent-soft); border: 1px solid #cdddff; border-radius: 10px;
-    padding: 16px 18px; margin-top: 16px;
-  }
-  footer { margin-top: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
-  .legend { font-size: 12px; color: var(--muted); margin-top: 8px; }
-  .legend span { margin-right: 14px; }
-</style>
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 2.5rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: .4rem;
+    }
+
+    header .subtitle {
+      font-size: .95rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    header .meta {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.4rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: .75rem;
+      font-weight: 600;
+      padding: .2rem .65rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .note-vat {
+      background: var(--amber-lt);
+      border-left: 3px solid var(--amber);
+      border-radius: 6px;
+      padding: .75rem 1rem;
+      font-size: .9rem;
+      color: #92400e;
+    }
+
+    header p.intro {
+      margin-top: 1.2rem;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    /* ── Section headings ── */
+    section { margin-bottom: 1.5rem; }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+    }
+
+    /* ── Glance table ── */
+    .glance-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+
+    .glance-table thead tr {
+      background: #f1f5f9;
+    }
+
+    .glance-table th {
+      text-align: left;
+      font-weight: 600;
+      padding: .65rem .9rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .glance-table td {
+      padding: .75rem .9rem;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .glance-table tbody tr:last-child td { border-bottom: none; }
+
+    .glance-table tbody tr:hover { background: #f8fafc; }
+
+    .opt-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: .8rem;
+      padding: .15rem .6rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .opt-1 { background: #dbeafe; color: #1e40af; }
+    .opt-2 { background: #dcfce7; color: #166534; }
+    .opt-3 { background: #ede9fe; color: #5b21b6; }
+    .opt-3-star { background: #fef3c7; color: #92400e; }
+    .opt-4 { background: #fce7f3; color: #9d174d; }
+
+    .price-cell { font-weight: 600; white-space: nowrap; }
+
+    /* ── Option cards ── */
+    .options-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .option-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .option-card.highlight {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px #fde68a;
+    }
+
+    .option-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.4rem 1.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .option-num {
+      flex-shrink: 0;
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .num-1 { background: #dbeafe; color: #1e40af; }
+    .num-2 { background: #dcfce7; color: #166534; }
+    .num-3 { background: #fef3c7; color: #92400e; }
+    .num-4 { background: #fce7f3; color: #9d174d; }
+
+    .option-title-block { flex: 1; }
+
+    .option-label {
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: .15rem;
+    }
+
+    .option-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .option-tagline {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    .option-body {
+      padding: 1rem 1.75rem 1.4rem;
+    }
+
+    .option-body ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    .option-body ul li {
+      padding: .3rem 0 .3rem 1.4rem;
+      position: relative;
+      font-size: .9rem;
+      color: #334155;
+    }
+
+    .option-body ul li::before {
+      content: "•";
+      position: absolute;
+      left: .3rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tradeoff {
+      background: #fef9f0;
+      border-left: 3px solid var(--amber);
+      border-radius: 5px;
+      padding: .5rem .8rem;
+      font-size: .84rem;
+      color: #78350f;
+      margin-bottom: 1rem;
+    }
+
+    .option-price {
+      display: inline-block;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: .55rem 1rem;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .future-proof-badge {
+      float: right;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: .2rem .65rem;
+      border-radius: 999px;
+    }
+
+    /* ── Note ── */
+    .note-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 1.25rem 1.75rem;
+      font-size: .9rem;
+      color: #334155;
+    }
+
+    /* ── Performance table ── */
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+
+    .perf-table thead tr { background: #f1f5f9; }
+
+    .perf-table th {
+      text-align: left;
+      font-weight: 600;
+      padding: .6rem .9rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: .72rem;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .perf-table td {
+      padding: .7rem .9rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .perf-table tbody tr:last-child td { border-bottom: none; }
+
+    .result-badge {
+      display: inline-block;
+      background: var(--green-lt);
+      color: var(--green);
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .15rem .55rem;
+      border-radius: 5px;
+    }
+
+    /* ── Recommendation ── */
+    .rec-grid {
+      display: grid;
+      gap: .85rem;
+    }
+
+    .rec-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      font-size: .9rem;
+    }
+
+    .rec-item.featured {
+      border-color: #f59e0b;
+      background: #fffdf5;
+    }
+
+    .rec-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: .05rem;
+    }
+
+    .rec-label {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .2rem;
+    }
+
+    .rec-desc { color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 2rem;
+      font-size: .8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1.2rem;
+      line-height: 1.6;
+    }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+  </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page">
 
-  <header class="title">
+  <!-- ── Header ── -->
+  <header>
     <h1>Document Classification — Hardware Options</h1>
-    <div class="sub">Deployment options for the local AI document-classification solution</div>
+    <p class="subtitle">Deployment options for the local AI document-classification solution</p>
+    <div class="meta">
+      <span class="tag">June 2026</span>
+      <span class="tag">Confidential</span>
+      <span class="tag">On-premises</span>
+    </div>
+    <div class="note-vat">
+      <strong>Uwaga dot. cen:</strong> Wszystkie ceny podane w tym dokumencie są cenami <strong>netto</strong> (bez podatku VAT).
+    </div>
+    <p class="intro">
+      The solution runs a <strong>local AI model</strong> to read and classify documents (PDFs, scans, and images) entirely
+      on the customer's own hardware — no cloud, no data leaving the premises. Because all processing is local, the choice
+      of hardware determines speed, the size of model that can run, and the deployment form factor.
+      This document presents <strong>four on-premises hardware options</strong> — from a budget GPU upgrade to an
+      all-in-one mini-PC — so the client can match capability, footprint, and budget.
+    </p>
   </header>
-  <div class="meta">Prepared for client review &middot; June 2026 &middot; Confidential</div>
 
-  <p class="lead">
-    The solution runs a <strong>local AI model</strong> to read and classify documents
-    (PDFs, scans, and images) entirely on the customer's own hardware — no cloud, no
-    data leaving the premises. Because all processing is local, the choice of hardware
-    determines speed, the size of model that can run, and the deployment form factor.
-  </p>
-  <p>
-    This document presents <strong>three on-premises hardware options</strong>, from an
-    entry-level GPU workstation to a high-end server and an all-in-one mini-PC, so the client
-    can match capability, footprint, and budget. All three run the same validated AI model;
-    they differ in speed, headroom, and cost. A key technical factor throughout is the
-    <strong>AI model size</strong> the hardware can host: the larger the model, the higher the
-    classification accuracy on difficult or scanned documents — and the more memory the
-    hardware needs.
-  </p>
-
-  <h2>On-premises options at a glance</h2>
-  <p style="margin-top:-4px;color:var(--muted);font-size:14px;">
-    All options below are <strong>on-premises (on-prem)</strong> deployments — the AI runs
-    entirely on hardware the client owns and controls; no cloud, no data leaving the premises.
-  </p>
-  <table>
-    <thead>
-      <tr>
-        <th>Option</th>
-        <th>Platform</th>
-        <th>AI model it can run</th>
-        <th>Form factor &amp; power</th>
-        <th>Indicative price</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>1. RTX 5070 Ti</strong></td>
-        <td>NVIDIA RTX 5070 Ti in a workstation</td>
-        <td>8B vision model (the configuration we tested)</td>
-        <td>Standard workstation; moderate power</td>
-        <td class="price-cell">~4&nbsp;000&nbsp;zł<br/><span style="font-weight:400;color:var(--muted);font-size:12px;">GPU</span></td>
-      </tr>
-      <tr>
-        <td><strong>2. RTX 5080</strong></td>
-        <td>NVIDIA RTX 5080 in a server chassis</td>
-        <td>8B vision model with headroom; room for larger/long-context models</td>
-        <td>Server with adequate PSU &amp; cooling; high power draw</td>
-        <td class="price-cell">~6&nbsp;000&nbsp;zł<br/><span style="font-weight:400;color:var(--muted);font-size:12px;">GPU</span></td>
-      </tr>
-      <tr>
-        <td><strong>3. AMD Ryzen AI Max+ 395</strong></td>
-        <td>Mini-PC APU (up to 128&nbsp;GB unified memory)</td>
-        <td>8B vision model and substantially larger models</td>
-        <td>Small-form-factor PC; moderate power, no server needed</td>
-        <td class="price-cell">~14&nbsp;000&nbsp;zł<br/><span style="font-weight:400;color:var(--muted);font-size:12px;">full system</span></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>The options in detail</h2>
-  <div class="cards">
-
+  <!-- ── At a glance ── -->
+  <section>
+    <div class="section-title">On-premises options at a glance</div>
     <div class="card">
-      <span class="tag base">Option 1 · Entry GPU</span>
-      <h3>NVIDIA RTX 5070 Ti — Workstation</h3>
-      <div class="platform">Discrete GPU in a standard workstation or small server</div>
-      <ul>
-        <li>Runs the validated 8B vision model with classification in a few seconds per document.</li>
-        <li>Lowest-cost on-prem GPU option that comfortably hosts the tested model.</li>
-        <li>Fits a standard workstation — no dedicated server room required.</li>
-      </ul>
-      <ul style="margin-top:0;">
-        <li><em>Trade-off:</em> less headroom than the 5080 for larger / long-context models.</li>
-      </ul>
-      <div class="foot">
-        <span class="pill good">Best value</span>
-        <span class="price">~4&nbsp;000&nbsp;zł (GPU)</span>
+      <table class="glance-table">
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Platform</th>
+            <th>AI model it can run</th>
+            <th>Form factor</th>
+            <th>Price (netto)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="opt-badge opt-1">1. Radeon RX 9070</span></td>
+            <td>AMD RX 9070 (16 GB) — existing or new machine</td>
+            <td>Qwen 3 VL 8B (comfortably on 16 GB)</td>
+            <td>GPU upgrade or full build</td>
+            <td class="price-cell">~2 000 zł / ~5 500 zł</td>
+          </tr>
+          <tr>
+            <td><span class="opt-badge opt-2">2. RTX 5060 8 GB</span></td>
+            <td>NVIDIA RTX 5060 8 GB — existing workstation</td>
+            <td>8B Qwen vision model (8 GB VRAM)</td>
+            <td>GPU upgrade or full build</td>
+            <td class="price-cell">~1 250 zł / ~4 000 zł</td>
+          </tr>
+          <tr>
+            <td><span class="opt-badge opt-3-star">3. RTX 5070 Ti ★</span></td>
+            <td>NVIDIA RTX 5070 Ti (16 GB) — existing or new machine</td>
+            <td>Qwen 3 VL 8B + headroom for larger models</td>
+            <td>GPU upgrade or full build</td>
+            <td class="price-cell">~4 000 zł / ~7 500 zł</td>
+          </tr>
+          <tr>
+            <td><span class="opt-badge opt-4">4. Ryzen AI Max+ 395</span></td>
+            <td>Mini-PC APU (up to 128 GB unified memory)</td>
+            <td>8B model + substantially larger models</td>
+            <td>Small-form-factor PC, no server</td>
+            <td class="price-cell">~14 000 zł</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Options in detail ── -->
+  <section>
+    <div class="section-title">The options in detail</div>
+    <div class="options-grid">
+
+      <!-- Option 1 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-num num-1">1</div>
+          <div class="option-title-block">
+            <div class="option-label">Mid-range GPU</div>
+            <div class="option-name">AMD Radeon RX 9070</div>
+            <div class="option-tagline">16 GB discrete GPU — drop-in upgrade or basis for a new build</div>
+          </div>
+        </div>
+        <div class="option-body">
+          <ul>
+            <li><strong>16 GB VRAM</strong> — runs <strong>Qwen 3 VL 8B</strong> comfortably with room to spare.</li>
+            <li>Can be inserted into an <strong>existing workstation</strong> — GPU only (~2 000 zł netto).</li>
+            <li>Alternatively, build a <strong>complete new machine</strong> around it (~5 500 zł netto full system).</li>
+          </ul>
+          <div class="tradeoff"><strong>Trade-off:</strong> AMD GPU — verify LM Studio driver compatibility before ordering.</div>
+          <div class="option-price">~2 000 zł netto (GPU) &nbsp;/&nbsp; ~5 500 zł netto (full build)</div>
+        </div>
+      </div>
+
+      <!-- Option 2 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-num num-2">2</div>
+          <div class="option-title-block">
+            <div class="option-label">Budget GPU</div>
+            <div class="option-name">NVIDIA RTX 5060 8 GB</div>
+            <div class="option-tagline">8 GB discrete GPU — lowest-cost entry point</div>
+          </div>
+        </div>
+        <div class="option-body">
+          <ul>
+            <li>Lowest up-front GPU cost of all options.</li>
+            <li>Runs the smaller 8B Qwen vision model within its 8 GB VRAM budget.</li>
+            <li>Drop-in upgrade to any existing workstation with a free PCIe slot.</li>
+            <li>Alternatively, build a <strong>complete new machine</strong> around it (~4 000 zł netto full system).</li>
+          </ul>
+          <div class="tradeoff"><strong>Trade-off:</strong> 8 GB limits model choice; no headroom for larger models.</div>
+          <div class="option-price">~1 250 zł netto (GPU) &nbsp;/&nbsp; ~4 000 zł netto (full build)</div>
+        </div>
+      </div>
+
+      <!-- Option 3 — highlighted -->
+      <div class="option-card highlight">
+        <div class="option-header">
+          <div class="option-num num-3">3</div>
+          <div class="option-title-block">
+            <div class="option-label">Future-proof GPU</div>
+            <div class="option-name">
+              NVIDIA RTX 5070 Ti 16 GB
+              <span class="future-proof-badge">Most future-proof</span>
+            </div>
+            <div class="option-tagline">16 GB GDDR7 discrete GPU — high-performance, forward-looking choice</div>
+          </div>
+        </div>
+        <div class="option-body">
+          <ul>
+            <li><strong>16 GB GDDR7 VRAM</strong> — runs <strong>Qwen 3 VL 8B</strong> with ample headroom for larger, more accurate models in the future.</li>
+            <li>NVIDIA CUDA ecosystem: best software compatibility with LM Studio, no driver concerns.</li>
+            <li>Can be inserted into an <strong>existing workstation</strong> — GPU only (~4 000 zł netto).</li>
+            <li>Alternatively, build a <strong>complete new machine</strong> around it (~7 500 zł netto full system).</li>
+            <li>Noticeably faster inference than the RX 9070 thanks to newer architecture and higher memory bandwidth.</li>
+          </ul>
+          <div class="tradeoff"><strong>Trade-off:</strong> Higher GPU cost than Option 1, but buys significantly more performance and future runway.</div>
+          <div class="option-price">~4 000 zł netto (GPU) &nbsp;/&nbsp; ~7 500 zł netto (full build)</div>
+        </div>
+      </div>
+
+      <!-- Option 4 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-num num-4">4</div>
+          <div class="option-title-block">
+            <div class="option-label">Edge / All-in-one</div>
+            <div class="option-name">AMD Ryzen AI Max+ 395</div>
+            <div class="option-tagline">Mini-PC APU with up to 128 GB unified memory (Strix Halo)</div>
+          </div>
+        </div>
+        <div class="option-body">
+          <ul>
+            <li>Up to <strong>128 GB unified memory</strong> shared with the GPU — runs the 8B vision model comfortably, and far larger models if higher accuracy is wanted.</li>
+            <li>Delivers near-workstation capability in a <strong>small mini-PC</strong> — no server chassis, no discrete GPU, moderate power.</li>
+            <li>Self-contained edge box: full capability on-premises without a server room.</li>
+          </ul>
+          <div class="tradeoff"><strong>Trade-off:</strong> Highest up-front cost of the four, as a complete system.</div>
+          <div class="option-price">~14 000 zł netto (full system)</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Model size note ── -->
+  <section>
+    <div class="section-title">A note on model size &amp; accuracy</div>
+    <div class="note-card">
+      The hardware's memory caps the size of AI model it can host, and model size is the main lever on classification
+      quality. <strong>Options 1, 3, and 4 run the validated 8B vision model</strong> — the configuration that reads
+      both digital text and scanned/image documents reliably (4/4 correct in our proof-of-concept). Option 2 (RTX 5060,
+      8 GB) also runs an 8B Qwen vision model but with no memory headroom left. The RX 9070 (16 GB), RTX 5070 Ti
+      (16 GB), and 128 GB Ryzen all leave room for larger, longer-context models should higher accuracy be required
+      later — with the <strong>RTX 5070 Ti offering the best performance-per-zloty at the 16 GB tier</strong>.
+    </div>
+  </section>
+
+  <!-- ── Performance ── -->
+  <section>
+    <div class="section-title">Performance reference</div>
+    <div class="card">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">
+        Measured with the 8B vision model on an 8 GB NVIDIA GPU (comparable to the RTX 5060 budget option;
+        the RX 9070, RTX 5070 Ti, and Ryzen would be equal or faster).
+      </p>
+      <table class="perf-table">
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2-page form</td>
+            <td>Digital text</td>
+            <td>~6 s</td>
+            <td><span class="result-badge">Correct</span></td>
+          </tr>
+          <tr>
+            <td>3-page tax form</td>
+            <td>Digital text</td>
+            <td>~6 s</td>
+            <td><span class="result-badge">Correct</span></td>
+          </tr>
+          <tr>
+            <td>4-page tax form</td>
+            <td>Digital text</td>
+            <td>~5–6 s</td>
+            <td><span class="result-badge">Correct</span></td>
+          </tr>
+          <tr>
+            <td>Scanned document</td>
+            <td>Image (AI reads the scan)</td>
+            <td>~5 s/page</td>
+            <td><span class="result-badge">Correct</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:.9rem;">
+        A few seconds per document, all classified correctly. Digital-text documents are fast regardless of length;
+        <strong>scanned documents cost more per page</strong> because the AI reads each page as an image.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Recommendation ── -->
+  <section>
+    <div class="section-title">Recommendation</div>
+    <div class="rec-grid">
+      <div class="rec-item">
+        <div class="rec-icon">💰</div>
+        <div>
+          <div class="rec-label">Budget upgrade — Option 2 · RTX 5060 8 GB &nbsp;~1 250 zł netto</div>
+          <div class="rec-desc">The cheapest way to add local AI classification to an existing workstation. Works with the smaller Qwen vision model at 8 GB; no headroom for larger models.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon">⚖️</div>
+        <div>
+          <div class="rec-label">Best value — Option 1 · Radeon RX 9070 &nbsp;~2 000 zł / ~5 500 zł netto</div>
+          <div class="rec-desc">Drop a 16 GB card into an existing workstation and run Qwen 3 VL 8B comfortably. If a new machine is also needed, the full build comes to ~5 500 zł netto.</div>
+        </div>
+      </div>
+      <div class="rec-item featured">
+        <div class="rec-icon">🚀</div>
+        <div>
+          <div class="rec-label">Most future-proof GPU — Option 3 · RTX 5070 Ti &nbsp;~4 000 zł / ~7 500 zł netto</div>
+          <div class="rec-desc">NVIDIA's latest architecture with 16 GB GDDR7 — faster than the RX 9070, guaranteed CUDA compatibility, and the most headroom for future model upgrades at the GPU tier. Recommended when the investment horizon is 3–5 years or larger models may be needed.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon">📦</div>
+        <div>
+          <div class="rec-label">All-in-one, no server — Option 4 · Ryzen AI Max+ 395 &nbsp;~14 000 zł netto</div>
+          <div class="rec-desc">A single self-contained box with the most memory headroom, ideal where a server room is not available or the largest models may be wanted later.</div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <span class="tag server">Option 2 · Server</span>
-      <h3>NVIDIA RTX 5080 — Server / Workstation</h3>
-      <div class="platform">Discrete high-end GPU in a server or workstation chassis</div>
-      <ul>
-        <li>Runs the validated 8B vision model with comfortable headroom.</li>
-        <li>Fastest classification; room to grow into larger or longer-context models for higher accuracy.</li>
-        <li>Can serve multiple users / higher document volumes from one central machine.</li>
-      </ul>
-      <div class="callout" style="margin:8px 0 12px;">
-        <strong>Client requirement:</strong> a proper <strong>server with an adequate
-        power supply and cooling</strong> for a high-wattage GPU. This is the
-        highest-power option, but also the most capable.
-      </div>
-      <div class="foot">
-        <span class="pill good">Highest performance</span>
-        <span class="pill warn">Needs server &amp; PSU</span>
-        <span class="price">~6&nbsp;000&nbsp;zł (GPU)</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <span class="tag edge">Option 3 · Edge — All-in-one</span>
-      <h3>AMD Ryzen AI Max+ 395</h3>
-      <div class="platform">Mini-PC APU with up to 128&nbsp;GB unified memory (Strix Halo)</div>
-      <ul>
-        <li>Up to <strong>128&nbsp;GB unified memory</strong> shared with the GPU — runs the 8B
-        vision model comfortably, and far larger models if higher accuracy is wanted.</li>
-        <li>Delivers near-workstation capability in a <strong>small mini-PC</strong> — no server
-        chassis, no discrete GPU, moderate power.</li>
-        <li>Self-contained edge box: full capability on-premises without a server room.</li>
-      </ul>
-      <ul style="margin-top:0;">
-        <li><em>Trade-off:</em> highest up-front cost of the three, as a complete system.</li>
-      </ul>
-      <div class="foot">
-        <span class="pill good">Full capability, no server</span>
-        <span class="pill warn">Highest cost</span>
-        <span class="price">~14&nbsp;000&nbsp;zł (full system)</span>
-      </div>
-    </div>
-
-  </div>
-
-  <h2>A note on model size &amp; accuracy</h2>
-  <p>
-    The hardware's memory caps the size of AI model it can host, and model size is the
-    main lever on classification quality. <strong>All three options above run the validated
-    8B vision model</strong> — the configuration that reads both digital text and
-    scanned/image documents reliably (4/4 correct in our proof-of-concept). The differences
-    between them are <strong>speed and headroom</strong> (the RTX 5080 and the 128&nbsp;GB Ryzen
-    leave more room for larger, longer-context models should higher accuracy be required
-    later), not whether the tested model fits.
-  </p>
-
-  <h2>Performance reference</h2>
-  <p>
-    Measured with the 8B vision model on an 8&nbsp;GB NVIDIA GPU (comparable to the RTX 5070 Ti
-    entry option; the RTX 5080 and Ryzen would be equal or faster):
-  </p>
-  <table>
-    <thead>
-      <tr><th>Document</th><th>Type</th><th>Time</th><th>Result</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>2-page form</td><td>Digital text</td><td>~6&nbsp;s</td><td>Correct</td></tr>
-      <tr><td>3-page tax form</td><td>Digital text</td><td>~6&nbsp;s</td><td>Correct</td></tr>
-      <tr><td>4-page tax form</td><td>Digital text</td><td>~5–6&nbsp;s</td><td>Correct</td></tr>
-      <tr><td>Scanned document</td><td>Image (AI reads the scan)</td><td>~5&nbsp;s/page</td><td>Correct</td></tr>
-    </tbody>
-  </table>
-  <p style="font-size:14px;color:var(--muted);">
-    A few seconds per document, all classified correctly. Digital-text documents are fast
-    regardless of length; <strong>scanned documents cost more per page</strong> because the AI
-    reads each page as an image.
-  </p>
-
-  <h2>Recommendation</h2>
-  <div class="rec">
-    <p style="margin-top:0;">
-      <strong>Best value (Option 1 — RTX 5070 Ti, ~4&nbsp;000&nbsp;zł):</strong> the lowest-cost way
-      to run the validated model on a standard workstation. The right starting point for
-      typical, interactive document volumes.
-    </p>
-    <p>
-      <strong>Most performance / growth (Option 2 — RTX 5080, ~6&nbsp;000&nbsp;zł):</strong> for
-      higher volumes or to leave room for larger models — provided the client can supply a
-      server with adequate power and cooling.
-    </p>
-    <p style="margin-bottom:0;">
-      <strong>All-in-one, no server (Option 3 — Ryzen AI Max+ 395, ~14&nbsp;000&nbsp;zł):</strong>
-      a single self-contained box with the most memory headroom, ideal where a server room
-      is not available or the largest models may be wanted later.
-    </p>
-  </div>
-
+  <!-- ── Footer ── -->
   <footer>
-    <div class="legend">
-      <span><span class="pill good">green</span> strength</span>
-      <span><span class="pill warn">amber</span> consideration</span>
-    </div>
-    <p>
-      All options are on-premises; the AI runs entirely on client-owned hardware with no cloud
-      dependency. Prices are indicative hardware estimates (excl. VAT, integration, and support)
-      and vary with retailer and configuration. Performance figures are from the project's measured
-      test run and are representative, not a contractual benchmark. Accuracy figures reflect a small
-      proof-of-concept sample and should be re-validated on a larger, client-specific document set.
-    </p>
+    All options are on-premises; the AI runs entirely on client-owned hardware with no cloud dependency.
+    <strong>All prices are net (netto) — VAT not included.</strong>
+    Prices are indicative hardware estimates and vary with retailer and configuration.
+    Performance figures are from the project's measured test run and are representative, not a contractual benchmark.
+    Accuracy figures reflect a small proof-of-concept sample and should be re-validated on a larger, client-specific document set.
   </footer>
 
 </div>
