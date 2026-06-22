@@ -16,8 +16,8 @@ from pathlib import Path
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from sid_beta.classifier import classify
-from sid_beta.ingest import IngestError, ingest
+from app.sid_beta.classifier import classify
+from app.sid_beta.ingest import IngestError, ingest
 
 from .config import ALLOWED_ORIGINS, DEMO_ENV, resolve_department
 from .graph import GraphError, run_flow

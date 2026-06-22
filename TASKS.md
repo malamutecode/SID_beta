@@ -219,3 +219,39 @@ Non-demo input should be a drag-and-drop file area, not a textarea.
 - [x] BackendSettings(BaseSettings) loads DEMO_ENV + CORS origins from root `.env` (env vars take precedence)
 - [x] CORS defaults cover Vite ports 5173-5175
 - [x] DEMO_ENV moved to root `.env`; removed misleading backend/.env; updated backend/.env.example
+- [x] Consolidated env docs into root `.env.example`; removed backend/.env.example
+
+## 15. Restructure into self-contained backend + dockerize
+Decision: fold the classifier into one package `app` (core = `app.sid_beta`) under
+`backend/`, so the backend is self-contained for Docker. Frontend = multi-stage
+nginx image serving the static build and proxying /api to the backend.
+
+### 15a. Relocate Python into backend/
+- [x] Move src/sid_beta -> backend/app/sid_beta
+- [x] Move tests/ -> backend/tests; move samples/ -> backend/samples
+- [x] Move pyproject.toml + uv.lock + .python-version -> backend/ ; flat package `app` (uv build-backend module-name/root)
+- [x] Update imports: `sid_beta.X` -> `app.sid_beta.X` (backend/app + tests)
+- [x] [project.scripts] sid-beta = app.sid_beta:main; pytest pythonpath="."
+- [x] Both settings classes load backend/.env by ABSOLUTE path (CWD-independent)
+- [x] samples/ path resolution still correct after moves (no edits needed)
+- [x] `uv sync` in backend/ green; `uv run pytest` 16 passed (incl. live e2e)
+- [x] Backend runs: uvicorn app.main:app -> /health + /config OK
+
+### 15b. Backend Dockerfile
+- [x] backend/Dockerfile (python:3.13-slim + uv from ghcr, frozen sync, copy app + samples)
+- [x] Install Poppler (poppler-utils) in image for scanned PDFs
+- [x] EXPOSE 8000; CMD uvicorn app.main:app --host 0.0.0.0 --port 8000
+- [x] backend/.dockerignore (.venv, __pycache__, tests, .env)
+- [x] LM Studio on host -> SID_BASE_URL=http://host.docker.internal:1234/v1 (set in compose)
+
+### 15c. Frontend Dockerfile
+- [x] frontend/Dockerfile multi-stage: node build -> nginx serve dist/
+- [x] nginx.conf: SPA fallback + proxy /api/ -> backend:8000 (+ 25m upload cap)
+- [x] Frontend API base -> /api (VITE_API_BASE_URL set in Dockerfile build)
+- [x] frontend/.dockerignore (node_modules, dist, .env)
+
+### 15d. Compose + docs
+- [x] docker-compose.yml: backend + frontend, env, host.docker.internal mapping
+- [x] Update README + CLAUDE.md layout/commands for new structure + Docker
+- [~] Verify `docker compose up`: compose config validates; full image build pending
+      (Docker daemon was not running in this session — build/run untested)

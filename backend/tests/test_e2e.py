@@ -24,9 +24,9 @@ from pathlib import Path
 import httpx
 import pytest
 
-from sid_beta.classifier import classify
-from sid_beta.config import CATEGORIES, settings
-from sid_beta.ingest import IngestError, ingest
+from app.sid_beta.classifier import classify
+from app.sid_beta.config import CATEGORIES, settings
+from app.sid_beta.ingest import IngestError, ingest
 
 SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples"
 

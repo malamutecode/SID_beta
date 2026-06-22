@@ -1,0 +1,30 @@
+# Orchestrates the backend (FastAPI) and frontend (nginx) for the routing demo.
+#
+#   docker compose up --build
+#   -> frontend at http://localhost:8080, API proxied under http://localhost:8080/api
+#
+# LM Studio runs on the HOST machine. Containers reach it via
+# host.docker.internal (mapped below for Linux too). Load a vision model and
+# start LM Studio's local server first.
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      # Reach LM Studio on the host (overrides the localhost default).
+      SID_BASE_URL: http://host.docker.internal:1234/v1
+      # Demo mode (4 fixed docs, deterministic assignment, preloaded diagram).
+      DEMO_ENV: "true"
+    extra_hosts:
+      # Lets Linux containers resolve host.docker.internal (no-op on Docker Desktop).
+      - "host.docker.internal:host-gateway"
+    # Expose directly too, for hitting the API without the frontend.
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"

@@ -12,7 +12,7 @@ Edges are plain connectors — they carry no classification meaning.
 
 from __future__ import annotations
 
-from sid_beta.classifier import classify_into
+from app.sid_beta.classifier import classify_into
 
 from .schemas import (
     FlowEdge,

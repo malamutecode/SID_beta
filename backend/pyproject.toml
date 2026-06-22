@@ -1,7 +1,7 @@
 [project]
-name = "sid-beta"
+name = "sid-beta-backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI backend wrapping the sid_beta local-LLM document classifier."
 readme = "README.md"
 authors = [
     { name = "pawe213", email = "pawe213@gmail.com" }
@@ -22,14 +22,22 @@ dependencies = [
 ]
 
 [project.scripts]
-sid-beta = "sid_beta:main"
+# Classifier CLI: ingest backend/samples + inline samples, classify, print.
+sid-beta = "app.sid_beta:main"
 
 [build-system]
 requires = ["uv_build>=0.8.17,<0.9.0"]
 build-backend = "uv_build"
 
+# Flat layout: the importable package `app` lives at backend/app (not src/).
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Run from backend/ so `import app...` resolves against the source tree.
+pythonpath = ["."]
 markers = [
     "e2e: end-to-end tests that require a live LM Studio server",
 ]

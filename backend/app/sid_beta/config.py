@@ -7,7 +7,13 @@ overridden via environment variables / a `.env` file.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Shared backend .env (this file is backend/app/sid_beta/config.py -> backend/.env).
+# Absolute so it loads regardless of CWD (uv run, Docker WORKDIR).
+_ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
 
 # The document taxonomy. Changing the set of categories should mean editing only
 # this list (and it is what the classifier prompt is built from).
@@ -25,7 +31,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_prefix="SID_",
-        env_file=".env",
+        env_file=_ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
     )

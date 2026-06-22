@@ -25,8 +25,8 @@ On top of the POC there is an **interactive routing demo** (a **FastAPI** backen
 that wraps the classifier, plus a **Vite + React + TS** frontend) where the user
 builds an **executable flow diagram** that routes a document Document → classify
 → department → team → person → Employee. See **Routing demo** below. The
-classifier core in `src/sid_beta/` stays the source of truth — the demo wraps it,
-never forks it.
+classifier core in `backend/app/sid_beta/` stays the source of truth — the demo
+wraps it, never forks it.
 
 ## Stack
 
@@ -139,8 +139,8 @@ idea it's served over HTTP.
 
 ### Backend (FastAPI, `backend/app/`)
 
-Wraps the classifier behind a small REST API. Run from the **project root** with
-uvicorn (so `sid_beta` and the root `.env` resolve correctly).
+Wraps the classifier behind a small REST API. Run from `backend/` with
+`uvicorn app.main:app` (the package is `app`; the core is `app.sid_beta`).
 
 | Method | Path        | Purpose                                                        |
 |--------|-------------|----------------------------------------------------------------|
@@ -209,65 +209,79 @@ registries, file upload.
 
 ## Layout
 
+The repo is split into a **self-contained backend** and a **frontend**, each
+independently dockerized. The classifier core lives *inside* the backend as the
+`app.sid_beta` subpackage (so the backend image is self-contained); the import
+boundary is still one-way (`app` → `app.sid_beta`).
+
 ```
 sid_beta/
-├── CLAUDE.md            # this file
-├── TASKS.md             # task checklist (Part 1 POC + Part 2 demo)
-├── README.md            # how to run the demo + where mock data lives
-├── pyproject.toml       # uv-managed project + deps; pytest config
-├── .python-version      # pins 3.13
-├── .env / .env.example  # SID_* settings + DEMO_ENV (read from project root)
-├── docs/                # technical memo + client hardware options
-├── samples/             # example input files (+ samples_description.md labels)
-├── tests/
-│   ├── test_basics.py   # LLM-free: schema + ingestion dispatch
-│   ├── test_e2e.py      # live: classify samples, assert expected labels
-│   └── test_perf_e2e.py # live: time classification, write perf_report.txt
-├── src/sid_beta/        # CLASSIFIER CORE (no web/demo deps)
-│   ├── config.py        # Settings (SID_* env) + CATEGORIES taxonomy
-│   ├── models.py        # Classification + DynamicClassification (+ _fold)
-│   ├── ingest.py        # file → text extraction + image (VLM) dispatch
-│   ├── classifier.py    # Agent, classify(), classify_into(), text cap
-│   ├── samples.py       # inline document text samples
-│   └── main.py          # CLI entrypoint: ingest samples/, classify, print
-├── backend/app/         # FASTAPI layer (imports sid_beta; not packaged)
-│   ├── config.py        # BackendSettings (.env) + category→department map
-│   ├── schemas.py       # request/response + flow models
-│   ├── graph.py         # executable-diagram walker (/run-flow)
-│   └── main.py          # app + routes (/health /config /classify /run-flow /extract)
-└── frontend/            # VITE + REACT + TS app (Polish UI)
+├── CLAUDE.md             # this file
+├── TASKS.md              # task checklist (Part 1 POC + Part 2 demo)
+├── README.md             # how to run (local + Docker) + where mock data lives
+├── docker-compose.yml    # orchestrates backend + frontend
+├── docs/                 # technical memo + client hardware options
+├── backend/              # SELF-CONTAINED BACKEND (Python)
+│   ├── pyproject.toml    # uv project; package = `app`; pytest config
+│   ├── uv.lock
+│   ├── .python-version   # pins 3.13
+│   ├── .env / .env.example  # SID_* + DEMO_ENV + CORS (read by both settings classes)
+│   ├── Dockerfile        # python:3.13-slim + uv + Poppler; runs uvicorn app.main:app
+│   ├── .dockerignore
+│   ├── samples/          # example input files (+ samples_description.md labels)
+│   ├── tests/            # test_basics (LLM-free), test_e2e / test_perf_e2e (live)
+│   └── app/              # importable package `app`
+│       ├── main.py       # FastAPI app + routes (/health /config /classify /run-flow /extract)
+│       ├── config.py     # BackendSettings (DEMO_ENV, CORS) + category→department map
+│       ├── schemas.py    # request/response + flow models
+│       ├── graph.py      # executable-diagram walker (/run-flow)
+│       └── sid_beta/     # CLASSIFIER CORE (no web deps; subpackage of app)
+│           ├── config.py     # Settings (SID_* env) + CATEGORIES taxonomy
+│           ├── models.py     # Classification + DynamicClassification (+ _fold)
+│           ├── ingest.py     # file → text extraction + image (VLM) dispatch
+│           ├── classifier.py # Agent, classify(), classify_into(), text cap
+│           ├── samples.py    # inline document text samples
+│           └── main.py       # CLI entrypoint: ingest samples/, classify, print
+└── frontend/             # VITE + REACT + TS app (Polish UI)
+    ├── Dockerfile        # multi-stage: npm build → nginx serves dist/ + proxies /api
+    ├── nginx.conf        # SPA + /api → backend:8000
     └── src/
-        ├── flow/        # React Flow editor, node types, run/node panels, dropzone
-        ├── registries/  # Departments + Employees pages
-        ├── services/    # async data layer + backend client
-        └── data/        # seed + isolated demo data (demo.ts, demoFlow.ts, seed.ts)
+        ├── flow/         # React Flow editor, node types, run/node panels, dropzone
+        ├── registries/   # Departments + Employees pages
+        ├── services/     # async data layer + backend client
+        └── data/         # seed + isolated demo data (demo.ts, demoFlow.ts, seed.ts)
 ```
 
 ## Commands
 
 ```bash
-# Classifier core
+# Backend (run from backend/)
+cd backend
 uv sync                              # create venv + install deps
-uv run python -m sid_beta.main       # ingest samples/ + inline, classify, print
-uv run pytest                        # all tests (e2e auto-skip if server down)
+uv run uvicorn app.main:app --reload --port 8000   # API on http://localhost:8000
+uv run sid-beta                      # classifier CLI: ingest samples/, classify, print
+uv run pytest                        # all tests (e2e auto-skip if LM Studio down)
 uv run pytest -m e2e -v              # live correctness tests (needs LM Studio)
-uv run pytest tests/test_perf_e2e.py -s   # regenerate docs/perf_report.txt
+uv run pytest tests/test_perf_e2e.py -s   # regenerate perf_report.txt
 uv add <pkg>                         # add a dependency
 
-# Routing demo — run from the PROJECT ROOT
-uv run uvicorn backend.app.main:app --reload --port 8000   # backend (reads root .env)
-cd frontend && npm install && npm run dev                  # frontend (http://localhost:5173)
+# Frontend (run from frontend/)
+cd frontend && npm install && npm run dev   # http://localhost:5173
+
+# Everything in Docker (from the repo root)
+docker compose up --build            # frontend http://localhost:8080, API under /api
 ```
 
-> `DEMO_ENV` and CORS origins are read **once at backend startup** (from the root
-> `.env` or real env vars; env wins). `--reload` re-runs code on file changes but
-> does **not** re-read env vars — restart uvicorn after changing `DEMO_ENV`. The
-> frontend reads the demo flag from `/config` on page load, so refresh the tab too.
+> `DEMO_ENV` and CORS origins are read **once at backend startup** (from
+> `backend/.env` or real env vars; env wins). `--reload` re-runs code on file
+> changes but does **not** re-read env vars — restart uvicorn after changing
+> `DEMO_ENV`. The frontend reads the demo flag from `/config` on page load, so
+> refresh the tab too.
 
 ## Configuration
 
-Settings live in `config.py` (`Settings`, env prefix `SID_`, also read from
-`.env`). See `.env.example`. Key values:
+Core settings live in `app/sid_beta/config.py` (`Settings`, env prefix `SID_`,
+also read from `backend/.env`). See `backend/.env.example`. Key values:
 
 | Key | Default | Purpose |
 |-----|---------|---------|
@@ -290,18 +304,24 @@ validates the predicted `category` against it. Expected sample labels live in
 
 ### Demo / backend settings
 
-The backend has its own `BackendSettings` (`backend/app/config.py`), also read
-from the **root** `.env` (env vars take precedence). Set these in the root
-`.env`, not in `backend/` — uvicorn runs from the project root, so that's where
-its `.env` is resolved.
+Both settings classes (`Settings` for `SID_*` and `BackendSettings` for the demo)
+read **`backend/.env`** — resolved by an absolute path from `__file__`, so it
+loads regardless of CWD (`uv run` from anywhere, Docker `WORKDIR /app`). Env vars
+take precedence. See `backend/.env.example`.
 
 | Key | Default | Purpose |
 |-----|---------|---------|
 | `DEMO_ENV` | `false` | turn the fixed demo scenario on/off (bare name, no `SID_` prefix) |
 | `SID_ALLOWED_ORIGINS` | localhost/127.0.0.1 :5173–:5175 | CORS origins for the Vite dev server |
 
-The frontend reads `VITE_API_BASE_URL` and `VITE_DEMO_ENV` (the latter only a
-fallback if `/config` is unreachable) — see `frontend/.env.example`.
+Under Docker, CORS is a non-issue: nginx serves the frontend and proxies `/api`
+to the backend, so the browser sees one origin (no preflight). Pass `DEMO_ENV`
+and `SID_BASE_URL=http://host.docker.internal:1234/v1` (LM Studio on the host)
+via compose — see `docker-compose.yml`.
+
+The frontend reads `VITE_API_BASE_URL` (local dev: `http://localhost:8000`;
+Docker: `/api`, set by its Dockerfile) and `VITE_DEMO_ENV` (a fallback only if
+`/config` is unreachable) — see `frontend/.env.example`.
 
 ## Conventions
 

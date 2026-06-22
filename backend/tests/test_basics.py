@@ -11,9 +11,9 @@ import pytest
 from pydantic import ValidationError
 from pydantic_ai import BinaryContent
 
-from sid_beta.config import CATEGORIES
-from sid_beta.ingest import IngestError, ingest
-from sid_beta.models import Classification
+from app.sid_beta.config import CATEGORIES
+from app.sid_beta.ingest import IngestError, ingest
+from app.sid_beta.models import Classification
 
 SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples"
 

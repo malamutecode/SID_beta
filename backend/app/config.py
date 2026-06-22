@@ -7,8 +7,15 @@ touching the classification core.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# The backend's .env lives at backend/.env (this file is backend/app/config.py).
+# Resolve it absolutely so it loads regardless of the current working directory
+# (uv run from anywhere, Docker WORKDIR /app, etc.).
+_ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 
 # Vite serves on 5173 by default, but falls back to 5174/5175 when that port is
 # taken — so allow the common range to avoid CORS "Failed to fetch" surprises.
@@ -22,13 +29,13 @@ _DEFAULT_ORIGINS = (
 class BackendSettings(BaseSettings):
     """Backend runtime settings, loadable from the environment or a ``.env`` file.
 
-    Loaded from ``.env`` in the working directory (alongside real environment
-    variables, which take precedence). Set ``DEMO_ENV=true`` there once instead of
-    exporting it on every launch.
+    Loaded from ``backend/.env`` (alongside real environment variables, which take
+    precedence). Set ``DEMO_ENV=true`` there once instead of exporting it on every
+    launch.
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,

@@ -28,9 +28,9 @@ import httpx
 import pytest
 from pydantic_ai import BinaryContent
 
-from sid_beta.classifier import classify
-from sid_beta.config import settings
-from sid_beta.ingest import IngestError, Payload, ingest
+from app.sid_beta.classifier import classify
+from app.sid_beta.config import settings
+from app.sid_beta.ingest import IngestError, Payload, ingest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLES_DIR = PROJECT_ROOT / "samples"
