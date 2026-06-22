@@ -9,15 +9,15 @@ to drive a **local LLM** (served by **LM Studio**) for **document classification
 
 The POC accepts **real document files** — `.pdf` (both text PDFs and
 **scanned/image-only PDFs**), `.docx`, and **images** (`.png`, `.jpg`/`.jpeg`) —
-plus inline text samples. **PDF is the primary format for first experiments.**
-Legacy `.doc` is out of scope for now. It relies on a **local vision-language model** (VLM, e.g.
-Qwen3-VL or Gemma 3) for OCR: images and scanned pages are sent **directly to
-the model** as image content, so there is **no separate OCR engine** (no
-Tesseract). Native-text inputs (`.docx`, text PDFs, inline text) are extracted
-to plain text first; image-bearing inputs are passed as image bytes. The model
-returns a **structured** result: predicted category, confidence, and a short
-rationale. Categories are configurable in one place so the classifier can be
-re-pointed at any document taxonomy.
+plus inline text samples. PDF is the primary format; legacy `.doc` is out of
+scope. It relies on a **local vision-language model** (VLM, e.g. Qwen3-VL or
+Gemma 3) for OCR: images and scanned pages are sent **directly to the model** as
+image content, so there is **no separate OCR engine** (no Tesseract).
+Native-text inputs (`.docx`, text PDFs, inline text) are extracted to plain text
+first; image-bearing inputs are passed as image bytes. The model returns a
+**structured** result: predicted category, confidence, and a short rationale.
+Categories are configurable in one place so the classifier can be re-pointed at
+any document taxonomy.
 
 This is a learning/evaluation POC — keep it small, readable, and dependency-light.
 
@@ -42,10 +42,12 @@ placeholder string).
 
 - Default base URL: `http://localhost:1234/v1`
 - Start the server from LM Studio's **Developer / Local Server** tab, load a
-  chat model, then click **Start Server**.
+  **vision** model, then click **Start Server**.
 - The `model` name passed to `OpenAIChatModel(...)` should match the model
   identifier shown by LM Studio. Many local models also work with any string,
   but matching it avoids surprises.
+- The POC defaults to `qwen/qwen3-vl-8b` (set in `config.py`, overridable via
+  `SID_MODEL_NAME`). This is the model the test suite is validated against.
 
 > Note: smaller local models can be unreliable at strict structured output.
 > If JSON/tool-call parsing fails, lower the temperature and/or pick a model
@@ -71,7 +73,7 @@ class Classification(BaseModel):
     reason: str
 
 model = OpenAIChatModel(
-    "local-model",  # name as shown in LM Studio
+    "qwen/qwen3-vl-8b",  # name as shown in LM Studio
     provider=OpenAIProvider(base_url="http://localhost:1234/v1", api_key="lm-studio"),
 )
 
@@ -128,16 +130,21 @@ result = agent.run_sync([
 sid_beta/
 ├── CLAUDE.md            # this file
 ├── TASKS.md             # POC task checklist
-├── pyproject.toml       # uv-managed project + deps
+├── pyproject.toml       # uv-managed project + deps; pytest config
 ├── .python-version      # pins 3.13
-├── .env.example         # sample config (base_url, model name)
-├── samples/             # example input files (docx/pdf/scanned/images)
+├── .env.example         # documents the SID_* settings
+├── docs/                # technical memo + client hardware options
+├── samples/             # example input files (+ samples_description.md labels)
+├── tests/
+│   ├── test_basics.py   # LLM-free: schema + ingestion dispatch
+│   ├── test_e2e.py      # live: classify samples, assert expected labels
+│   └── test_perf_e2e.py # live: time classification, write perf_report.txt
 └── src/sid_beta/
     ├── __init__.py
-    ├── config.py        # settings: base_url, model, categories
+    ├── config.py        # Settings (SID_* env) + CATEGORIES taxonomy
     ├── models.py        # pydantic output schema (Classification)
-    ├── ingest.py        # file → text extraction + OCR dispatch
-    ├── classifier.py    # builds the Agent, classify() function
+    ├── ingest.py        # file → text extraction + image (VLM) dispatch
+    ├── classifier.py    # builds the Agent, classify(), text cap
     ├── samples.py       # inline document text samples
     └── main.py          # entrypoint: ingest files, classify, print results
 ```
@@ -145,10 +152,37 @@ sid_beta/
 ## Commands
 
 ```bash
-uv sync                          # create venv + install deps
-uv run python -m sid_beta.main   # run the classifier over inline samples
-uv add <pkg>                     # add a dependency
+uv sync                              # create venv + install deps
+uv run python -m sid_beta.main       # ingest samples/ + inline, classify, print
+uv run pytest                        # all tests (e2e auto-skip if server down)
+uv run pytest -m e2e -v              # live correctness tests (needs LM Studio)
+uv run pytest tests/test_perf_e2e.py -s   # regenerate docs/perf_report.txt
+uv add <pkg>                         # add a dependency
 ```
+
+## Configuration
+
+Settings live in `config.py` (`Settings`, env prefix `SID_`, also read from
+`.env`). See `.env.example`. Key values:
+
+| Key | Default | Purpose |
+|-----|---------|---------|
+| `SID_BASE_URL` | `http://localhost:1234/v1` | LM Studio endpoint |
+| `SID_MODEL_NAME` | `qwen/qwen3-vl-8b` | model id as shown in LM Studio |
+| `SID_API_KEY` | `lm-studio` | placeholder; LM Studio needs no real key |
+| `SID_PDF_TEXT_MIN_CHARS` | `20` | below this, a PDF page is treated as scanned |
+| `SID_POPPLER_PATH` | _(empty)_ | Poppler `bin` dir if not on PATH (scanned PDFs) |
+| `SID_PDF_RENDER_DPI` | `120` | rasterization DPI; lower ⇒ fewer vision tokens |
+| `SID_MAX_TEXT_CHARS` | `6000` | cap on extracted text per doc (fits small context) |
+
+The category taxonomy is the `CATEGORIES` list in `config.py` (currently:
+`zgloszenia budowlane`, `podatki`, `umowa B2B`, `geodezja`). `models.py`
+validates the predicted `category` against it. Expected sample labels live in
+`samples/samples_description.md` and the e2e test's `EXPECTED` map.
+
+> Local models have small context windows (the test model: 8192 tokens). The
+> `SID_PDF_RENDER_DPI` and `SID_MAX_TEXT_CHARS` caps keep multi-page / scanned
+> requests within budget; raise them if you load a larger-context model.
 
 ## Conventions
 
