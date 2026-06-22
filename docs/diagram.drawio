@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram name="Strona-1" id="Aqjeo5CYyHH1Kx1oHISR">
-    <mxGraphModel dx="1028" dy="611" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1368" dy="813" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -93,6 +93,69 @@
         </mxCell>
         <mxCell id="AZE4BpPo5r-lAegwchv_-37" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Bezpieczenstwo:&lt;br&gt;1) Izolacja sieciowa&lt;div&gt;2) Szyfrowanie&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;3) Autentykacja&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/div&gt;" vertex="1">
           <mxGeometry height="120" width="120" x="190" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UI" vertex="1">
+          <mxGeometry height="60" width="490" x="160" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Lista pracowników" vertex="1">
+          <mxGeometry height="100" width="120" x="170" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-40" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Lista departamentów" vertex="1">
+          <mxGeometry height="100" width="120" x="30" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-41" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="zaklasyfikuj dokument do departamentu" vertex="1">
+          <mxGeometry height="60" width="120" x="335" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-42" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="warunek przypisania do zespołu" vertex="1">
+          <mxGeometry height="60" width="120" x="335" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-43" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-41" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-42" value="geodezja">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="620" y="1330" as="sourcePoint" />
+            <mxPoint x="670" y="1280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-44" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="warunki przypisania do osoby&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="335" y="1510" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-46" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-41" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="drogi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="720" y="1330" as="sourcePoint" />
+            <mxPoint x="580" y="1390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-47" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-42" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="AZE4BpPo5r-lAegwchv_-44" value="zespół pierwszy">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="570" y="1410" as="sourcePoint" />
+            <mxPoint x="620" y="1360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-49" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-44" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="570" y="1410" as="sourcePoint" />
+            <mxPoint x="395" y="1610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-50" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-42" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="zespół drugi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="570" y="1410" as="sourcePoint" />
+            <mxPoint x="560" y="1510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-51" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="warunek przypisania do zespołu" vertex="1">
+          <mxGeometry height="60" width="120" x="520" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-52" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="warunki przypisania do osoby" vertex="1">
+          <mxGeometry height="60" width="120" x="510" y="1510" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-54" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Pracownik" vertex="1">
+          <mxGeometry height="60" width="30" x="380" y="1610" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-56" edge="1" parent="1" source="AZE4BpPo5r-lAegwchv_-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="AZE4BpPo5r-lAegwchv_-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AZE4BpPo5r-lAegwchv_-55" parent="1" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.checked_doc;" value="" vertex="1">
+          <mxGeometry height="61.6" width="50.8" x="370" y="1169" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
