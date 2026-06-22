@@ -19,6 +19,11 @@ DEMO_ENV=true uv run uvicorn backend.app.main:app --reload --port 8000
 ```
 
 > On Windows PowerShell: `$env:DEMO_ENV='true'; uv run uvicorn backend.app.main:app --reload --port 8000`
+>
+> Or set it once: copy `.env.example` → `.env` (in the project root) and put
+> `DEMO_ENV=true` there — the backend reads the root `.env` on startup, so you can
+> then launch with just `uv run uvicorn backend.app.main:app --reload --port 8000`.
+> Env is read once at startup; restart uvicorn after changing it.
 
 Endpoints:
 
