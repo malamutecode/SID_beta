@@ -17,28 +17,28 @@ export interface SampleDocument {
 // 4 fixed sample documents (geodezja / drogi themed).
 export const SAMPLE_DOCUMENTS: SampleDocument[] = [
   {
-    name: 'Wniosek o wypis z ewidencji gruntów.txt',
+    name: 'Wniosek o wypis z ewidencji gruntów.pdf',
     text:
       'Wniosek o wydanie wypisu i wyrysu z ewidencji gruntów i budynków. ' +
       'Dotyczy działki ewidencyjnej nr 123/4, obręb Śródmieście. Prosimy o ' +
       'sporządzenie dokumentacji geodezyjnej oraz aktualnej mapy zasadniczej.',
   },
   {
-    name: 'Zgłoszenie pracy geodezyjnej.txt',
+    name: 'Zgłoszenie pracy geodezyjnej.pdf',
     text:
       'Zgłoszenie pracy geodezyjnej do państwowego zasobu geodezyjnego i ' +
       'kartograficznego. Zakres: wznowienie znaków granicznych oraz pomiar ' +
       'sytuacyjno-wysokościowy działki.',
   },
   {
-    name: 'Wniosek o zajęcie pasa drogowego.txt',
+    name: 'Wniosek o zajęcie pasa drogowego.pdf',
     text:
       'Wniosek o wydanie zezwolenia na zajęcie pasa drogowego w celu ' +
       'umieszczenia urządzeń infrastruktury technicznej. Lokalizacja: ulica ' +
       'Główna, droga gminna. Termin zajęcia oraz powierzchnia zajęcia w m2.',
   },
   {
-    name: 'Projekt organizacji ruchu drogowego.txt',
+    name: 'Projekt organizacji ruchu drogowego.pdf',
     text:
       'Projekt czasowej organizacji ruchu drogowego na czas prowadzenia robót ' +
       'w pasie drogowym. Zawiera plan oznakowania, harmonogram robót drogowych ' +
@@ -50,8 +50,8 @@ export const SAMPLE_DOCUMENTS: SampleDocument[] = [
 // employee ids from data/seed.ts. This fixes the demo's end assignment so it is
 // always predictable regardless of live classifier output.
 export const DOC_TO_EMPLOYEE: Record<string, string> = {
-  'Wniosek o wypis z ewidencji gruntów.txt': 'emp-1',
-  'Zgłoszenie pracy geodezyjnej.txt': 'emp-2',
-  'Wniosek o zajęcie pasa drogowego.txt': 'emp-3',
-  'Projekt organizacji ruchu drogowego.txt': 'emp-4',
+  'Wniosek o wypis z ewidencji gruntów.pdf': 'emp-1',
+  'Zgłoszenie pracy geodezyjnej.pdf': 'emp-2',
+  'Wniosek o zajęcie pasa drogowego.pdf': 'emp-3',
+  'Projekt organizacji ruchu drogowego.pdf': 'emp-4',
 };
