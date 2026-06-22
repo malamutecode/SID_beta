@@ -10,7 +10,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import CATEGORIES, settings
 from .ingest import Payload
-from .models import Classification
+from .models import Classification, DynamicClassification
 
 
 def _system_prompt() -> str:
@@ -24,6 +24,27 @@ def _system_prompt() -> str:
         "Respond with the chosen category (use the exact category text above), a "
         "confidence between 0 and 1, and a short reason. If unsure, pick the "
         "closest category and lower the confidence."
+    )
+
+
+def _dynamic_system_prompt(classes: list[str], instruction: str) -> str:
+    """Build a classification prompt from a single graph node's definition.
+
+    ``classes`` are the allowed output labels (the node's outgoing edge labels);
+    ``instruction`` is the user-authored condition describing how to choose.
+    """
+    options = "\n".join(f"- {c}" for c in classes)
+    extra = f"\n\nClassification condition (from the diagram):\n{instruction}" if instruction.strip() else ""
+    return (
+        "You are a document classification assistant. You receive the contents "
+        "of a single document, either as extracted text or as page images. "
+        "Read it (perform OCR on images if needed) and classify it into exactly "
+        "one of the following classes:\n"
+        f"{options}"
+        f"{extra}\n\n"
+        "Respond with the chosen class (use the exact class text above), a "
+        "confidence between 0 and 1, and a short reason. If unsure, pick the "
+        "closest class and lower the confidence."
     )
 
 
@@ -72,3 +93,44 @@ def classify(payloads: list[Payload]) -> Classification:
     user_input: list[Payload] = ["Classify this document.", *_cap_text(payloads)]
     result = agent.run_sync(user_input)
     return result.output
+
+
+def _build_dynamic_agent(
+    classes: tuple[str, ...], instruction: str
+) -> Agent[None, DynamicClassification]:
+    """Build a one-off classification agent for a single graph node.
+
+    Not cached on the class list: graph nodes differ, so each step gets its own
+    agent. The model/provider construction is cheap relative to the LLM call.
+    """
+    model = OpenAIChatModel(
+        settings.model_name,
+        provider=OpenAIProvider(base_url=settings.base_url, api_key=settings.api_key),
+    )
+    return Agent(
+        model,
+        output_type=DynamicClassification,
+        system_prompt=_dynamic_system_prompt(list(classes), instruction),
+    )
+
+
+def classify_into(
+    payloads: list[Payload], classes: list[str], instruction: str = ""
+) -> DynamicClassification:
+    """Classify a document into one of ``classes`` per a node's ``instruction``.
+
+    This is the graph-execution primitive: the allowed classes come from the
+    diagram (a node's outgoing edge labels) rather than the global taxonomy. The
+    returned ``category`` is validated against ``classes`` (case-insensitive,
+    normalised to the canonical spelling).
+    """
+    if not payloads:
+        raise ValueError("no payloads to classify")
+    if not classes:
+        raise ValueError("no classes to classify into")
+    agent = _build_dynamic_agent(tuple(classes), instruction)
+    user_input: list[Payload] = ["Classify this document.", *_cap_text(payloads)]
+    result = agent.run_sync(user_input)
+    out = result.output
+    out.normalise_category(classes)
+    return out

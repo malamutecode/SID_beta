@@ -21,6 +21,13 @@ any document taxonomy.
 
 This is a learning/evaluation POC — keep it small, readable, and dependency-light.
 
+On top of the POC there is an **interactive routing demo** (a **FastAPI** backend
+that wraps the classifier, plus a **Vite + React + TS** frontend) where the user
+builds an **executable flow diagram** that routes a document Document → classify
+→ department → team → person → Employee. See **Routing demo** below. The
+classifier core in `src/sid_beta/` stays the source of truth — the demo wraps it,
+never forks it.
+
 ## Stack
 
 | Concern          | Choice                                            |
@@ -124,41 +131,138 @@ result = agent.run_sync([
 ])
 ```
 
+## Routing demo (backend + frontend)
+
+A thin layer on top of the classifier. **Two distinct layers, one-way
+dependency:** `backend` imports `sid_beta`, never the reverse; the core has no
+idea it's served over HTTP.
+
+### Backend (FastAPI, `backend/app/`)
+
+Wraps the classifier behind a small REST API. Run from the **project root** with
+uvicorn (so `sid_beta` and the root `.env` resolve correctly).
+
+| Method | Path        | Purpose                                                        |
+|--------|-------------|----------------------------------------------------------------|
+| GET    | `/health`   | liveness probe                                                 |
+| GET    | `/config`   | `{ demo_env, departments }` — surfaces the demo flag to the UI |
+| POST   | `/classify` | one-shot: text → `{ category, department, confidence, reason }`|
+| POST   | `/run-flow` | **execute a diagram** over a document → full traversal         |
+| POST   | `/extract`  | upload PDF/DOCX/image → extracted plain text (via `sid_beta.ingest`) |
+
+- `classify_document` calls the unchanged `sid_beta.classifier.classify()`, then
+  maps the category → a routing **department** via `CATEGORY_TO_DEPARTMENT` in
+  `backend/app/config.py` (the existing taxonomy has no *drogi*, so building-type
+  categories route there as a stand-in — edit there, not in the core).
+- `/run-flow` (`backend/app/graph.py`) is the graph walker — see below.
+- `/extract` writes the upload to a temp file, runs `sid_beta.ingest`, returns
+  concatenated text. Scanned/image-only docs (no extractable text) get a clear
+  `422`; the drop-zone path needs a text PDF or `.docx`.
+
+### The diagram is executable (output/class-block model)
+
+The flow diagram **drives** the classification — it is not decorative. Two roles
+of node:
+
+- **Classifier-type nodes** (`document`, `classifier`, `teamCondition`,
+  `personCondition`) carry an `instruction` (the condition, in the user's words).
+- **`class` (output) blocks** each declare **one class** — the block's *label is
+  the class name*.
+
+A classifier node classifies into the **`class` blocks it connects to**; the
+chosen class block then flows onward to the next stage. **Edges are plain
+connectors — they carry no labels/meaning.** The backend walks from the start
+(Document) node: at each node whose successors are class blocks it builds a
+prompt from that node's instruction + those class names, classifies, steps onto
+the chosen class block, follows it onward, and continues until a terminal node
+(`employee`). A node with a single plain connection (no class blocks) is a
+pass-through. The response returns every step's chosen class/confidence/reason
+plus the visited node/edge ids so the UI can highlight the path.
+
+So to change routing behaviour you edit the **diagram** (node instructions +
+class blocks), not the code. The classifier primitive for this is
+`classify_into(payloads, classes, instruction)` in `classifier.py` (additive;
+`classify()` is untouched), returning a `DynamicClassification` whose class is
+matched **accent/case-insensitively** (`models._fold`) so a local model dropping
+Polish diacritics — e.g. `zespol` vs `zespół`, including the stroked `ł` — still
+routes.
+
+### Frontend (Vite + React + TS, `frontend/`)
+
+- **Flow editor** (`@xyflow/react`): custom node types, add/connect/rename/delete,
+  pan/zoom, JSON export/import. Click a node to edit its name + instruction; a Run
+  panel executes the diagram and highlights the traversed path. Non-demo input is
+  a **drag-and-drop file area** (→ `/extract` → `/run-flow`).
+- **Departments** and **Employees** registries: list + CRUD, behind an **async
+  in-memory service layer** (`src/services/`) so a real backend/DB can replace the
+  mock without touching the UI.
+- **UI strings are in Polish**; code identifiers/types stay English.
+
+### Demo mode (`DEMO_ENV`)
+
+When `DEMO_ENV=true`, the app runs a fixed, predictable scenario: 4 preloaded
+sample documents (selectable), a **deterministic** doc→employee map (final
+assignment is fixed, not from live output), and an auto-loaded mock diagram. All
+demo data is isolated in `frontend/src/data/` (`demo.ts`, `demoFlow.ts`,
+`seed.ts`). With it off: live `/run-flow`, user-built diagrams, editable
+registries, file upload.
+
 ## Layout
 
 ```
 sid_beta/
 ├── CLAUDE.md            # this file
-├── TASKS.md             # POC task checklist
+├── TASKS.md             # task checklist (Part 1 POC + Part 2 demo)
+├── README.md            # how to run the demo + where mock data lives
 ├── pyproject.toml       # uv-managed project + deps; pytest config
 ├── .python-version      # pins 3.13
-├── .env.example         # documents the SID_* settings
+├── .env / .env.example  # SID_* settings + DEMO_ENV (read from project root)
 ├── docs/                # technical memo + client hardware options
 ├── samples/             # example input files (+ samples_description.md labels)
 ├── tests/
 │   ├── test_basics.py   # LLM-free: schema + ingestion dispatch
 │   ├── test_e2e.py      # live: classify samples, assert expected labels
 │   └── test_perf_e2e.py # live: time classification, write perf_report.txt
-└── src/sid_beta/
-    ├── __init__.py
-    ├── config.py        # Settings (SID_* env) + CATEGORIES taxonomy
-    ├── models.py        # pydantic output schema (Classification)
-    ├── ingest.py        # file → text extraction + image (VLM) dispatch
-    ├── classifier.py    # builds the Agent, classify(), text cap
-    ├── samples.py       # inline document text samples
-    └── main.py          # entrypoint: ingest files, classify, print results
+├── src/sid_beta/        # CLASSIFIER CORE (no web/demo deps)
+│   ├── config.py        # Settings (SID_* env) + CATEGORIES taxonomy
+│   ├── models.py        # Classification + DynamicClassification (+ _fold)
+│   ├── ingest.py        # file → text extraction + image (VLM) dispatch
+│   ├── classifier.py    # Agent, classify(), classify_into(), text cap
+│   ├── samples.py       # inline document text samples
+│   └── main.py          # CLI entrypoint: ingest samples/, classify, print
+├── backend/app/         # FASTAPI layer (imports sid_beta; not packaged)
+│   ├── config.py        # BackendSettings (.env) + category→department map
+│   ├── schemas.py       # request/response + flow models
+│   ├── graph.py         # executable-diagram walker (/run-flow)
+│   └── main.py          # app + routes (/health /config /classify /run-flow /extract)
+└── frontend/            # VITE + REACT + TS app (Polish UI)
+    └── src/
+        ├── flow/        # React Flow editor, node types, run/node panels, dropzone
+        ├── registries/  # Departments + Employees pages
+        ├── services/    # async data layer + backend client
+        └── data/        # seed + isolated demo data (demo.ts, demoFlow.ts, seed.ts)
 ```
 
 ## Commands
 
 ```bash
+# Classifier core
 uv sync                              # create venv + install deps
 uv run python -m sid_beta.main       # ingest samples/ + inline, classify, print
 uv run pytest                        # all tests (e2e auto-skip if server down)
 uv run pytest -m e2e -v              # live correctness tests (needs LM Studio)
 uv run pytest tests/test_perf_e2e.py -s   # regenerate docs/perf_report.txt
 uv add <pkg>                         # add a dependency
+
+# Routing demo — run from the PROJECT ROOT
+uv run uvicorn backend.app.main:app --reload --port 8000   # backend (reads root .env)
+cd frontend && npm install && npm run dev                  # frontend (http://localhost:5173)
 ```
+
+> `DEMO_ENV` and CORS origins are read **once at backend startup** (from the root
+> `.env` or real env vars; env wins). `--reload` re-runs code on file changes but
+> does **not** re-read env vars — restart uvicorn after changing `DEMO_ENV`. The
+> frontend reads the demo flag from `/config` on page load, so refresh the tab too.
 
 ## Configuration
 
@@ -184,6 +288,21 @@ validates the predicted `category` against it. Expected sample labels live in
 > `SID_PDF_RENDER_DPI` and `SID_MAX_TEXT_CHARS` caps keep multi-page / scanned
 > requests within budget; raise them if you load a larger-context model.
 
+### Demo / backend settings
+
+The backend has its own `BackendSettings` (`backend/app/config.py`), also read
+from the **root** `.env` (env vars take precedence). Set these in the root
+`.env`, not in `backend/` — uvicorn runs from the project root, so that's where
+its `.env` is resolved.
+
+| Key | Default | Purpose |
+|-----|---------|---------|
+| `DEMO_ENV` | `false` | turn the fixed demo scenario on/off (bare name, no `SID_` prefix) |
+| `SID_ALLOWED_ORIGINS` | localhost/127.0.0.1 :5173–:5175 | CORS origins for the Vite dev server |
+
+The frontend reads `VITE_API_BASE_URL` and `VITE_DEMO_ENV` (the latter only a
+fallback if `/config` is unreachable) — see `frontend/.env.example`.
+
 ## Conventions
 
 - Configuration (base URL, model name, category list) lives in `config.py` /
@@ -193,3 +312,15 @@ validates the predicted `category` against it. Expected sample labels live in
 - Keep the LLM-facing prompt explicit about the allowed categories and the
   required output shape.
 - Prefer `agent.run_sync` for the POC; async is out of scope unless needed.
+
+### Demo layer
+
+- **Don't modify the classifier core for the demo.** Wrap it. `classify_into()`
+  was added additively; `classify()` and the existing prompt are untouched.
+- The dependency is one-way: `backend` → `sid_beta`. Keep `sid_beta` free of
+  FastAPI/web concerns.
+- Keep all demo data (4 sample docs, doc→employee map, mock diagram) isolated in
+  `frontend/src/data/` so it's trivial to find and edit.
+- Registries go through the async service layer (`frontend/src/services/`), never
+  touching mock arrays directly — that's the seam for a future real backend.
+- UI text is Polish; keep code identifiers, types, and node-type keys English.
